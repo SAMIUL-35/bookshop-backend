@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
+import { BookRoutes } from './app/modules/Book/book.route';
 
 const app: Application = express();
 
@@ -7,11 +8,11 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
-console.log('  my name is samiul');
-const a=10;
 
-app.get('/', (req,res) => {
-  res.send('Hello World!');
-});
+// application routes
+app.use('/api/books', BookRoutes);
+
+
+
 
 export default app;
