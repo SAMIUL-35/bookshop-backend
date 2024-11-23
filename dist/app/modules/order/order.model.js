@@ -26,7 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const orderSchema = new mongoose_1.Schema({
     email: { type: String, required: true },
-    product: { type: String, ref: 'Book', required: true }, // Ensure product is an ObjectId
+    product: { type: String, ref: 'Book', required: true },
     quantity: { type: Number, required: true, min: 1 },
     totalPrice: { type: Number, required: true, min: 0 },
 }, {

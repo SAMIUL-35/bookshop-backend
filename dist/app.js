@@ -12,4 +12,7 @@ app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.use('/api/products', book_route_1.BookRoutes);
 app.use('/api', order_route_1.OrderRoutes);
+app.get('/', (req, res) => {
+    res.send('Hello, world!');
+});
 exports.default = app;

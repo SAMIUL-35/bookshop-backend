@@ -12,5 +12,8 @@ app.use(cors());
 app.use('/api/products', BookRoutes);
 
 app.use('/api', OrderRoutes);
+app.get('/', (req, res) => {
+  res.send('Hello, world!');
+});
 
 export default app;
