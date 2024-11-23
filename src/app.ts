@@ -10,7 +10,7 @@ app.use(cors());
 
 
 // application routes
-app.use('/api/books', BookRoutes);
+app.use('/api/products', BookRoutes);
 
 
 

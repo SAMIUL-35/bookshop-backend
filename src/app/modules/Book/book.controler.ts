@@ -1,77 +1,136 @@
 import { Request, Response } from 'express';
 import BookValidationSchema from './book.validation';
 import { ZodError, ZodIssue } from 'zod';
-import Book from './book.model';  // Assuming you have a Book model
+import { BookServices } from './book.service';
 
 const AddBook = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Validate the input using Zod schema
-    const validatedData = BookValidationSchema.parse(req.body); // This is the validated data
+    const validatedData = BookValidationSchema.parse(req.body);
+    const result = await BookServices.AddBookIntoDB(validatedData);
 
-    // Create a new Book instance
-    const bookData = new Book(validatedData); // Use validated data to create the book instance
-
-    // Save the book to the database
-    const savedBook = await bookData.save(); // Save the book and get the saved document
-
-    // Return the saved book data
-    res.status(201).json({
+    res.status(200).json({
       message: 'Book created successfully',
       success: true,
-      data: savedBook,  // Return the saved book document, which includes createdAt and updatedAt
+      data: result,
     });
   } catch (err: any) {
     if (err instanceof ZodError) {
-      // Map ZodError to the desired structure
       const transformedErrors: Record<string, any> = {};
-      console.log('Validation Error Occurred');
-
       err.errors.forEach((error: ZodIssue) => {
         const field = error.path.join('.') || 'unknown';
-
-        const type = error.code === 'too_small' ? 'min' : error.code;
-        const kind = error.code === 'too_small' ? 'min' : error.code;
-
         transformedErrors[field] = {
           message: error.message,
           name: 'ValidatorError',
-          properties: {
-            message: error.message,
-            type: type,
-            ...(error.code === 'too_small' && { min: error.minimum }), // Add min for "too_small"
-            ...(error.code === 'invalid_type' && {
-              expectedType: error.expected,
-            }), 
-          },
-          kind: kind, 
           path: field,
-          value: req.body[field] || null, 
+          value: req.body[field] || null,
         };
       });
-
-      const stack =
-        'Something went wrong\n' +
-        new Error().stack?.split('\n').slice(1).join('\n');
 
       res.status(400).json({
         message: 'Validation failed',
         success: false,
-        error: {
-          name: 'ValidationError',
-          errors: transformedErrors,
-        },
-        stack: stack,
+        errors: transformedErrors,
       });
     } else {
-      const stack = new Error().stack;
-
       res.status(500).json({
         message: 'An unexpected error occurred',
         success: false,
-        stack: stack,
+        error: err.message || 'Internal server error',
       });
     }
   }
 };
 
-export const BookControllers = { AddBook };
+const GetAllOrCategoryBooks = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { searchTerm } = req.query;
+    const filter: Record<string, any> = {};
+
+    if (searchTerm) {
+      const regex = new RegExp(searchTerm as string, 'i');
+      filter.$or = [{ title: regex }, { author: regex }, { category: regex }];
+    }
+
+    const result = await BookServices.getAllBooksFromDB(filter);
+
+    res.status(200).json({
+      message: 'Books retrieved successfully',
+      success: true,
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      message: err.message || 'Something went wrong',
+      success: false,
+      error: err,
+    });
+  }
+};
+
+const GetSingleBook = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { productId } = req.params;
+    
+
+    const result = await BookServices.getSingleBookFromDB(productId);
+
+    res.status(200).json({
+      message: 'Book retrieved successfully',
+      success: true,
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      message: err.message || 'Something went wrong',
+      success: false,
+      error: err,
+    });
+  }
+};
+const UpdateBook = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { productId } = req.params;
+    const updates = req.body;
+
+    const result = await BookServices.updateBookInDB(productId, updates);
+
+    res.status(200).json({
+      message: 'Book updated successfully',
+      success: true,
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      message: 'Something went wrong',
+      success: false,
+      error: err.message,
+    });
+  }
+};
+const DeleteBook = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { productId } = req.params;
+
+    const result = await BookServices.deleteBookFromDB(productId);
+
+    res.status(200).json({
+      message: 'Book deleted successfully',
+      success: true,
+      data: {},
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      message: err.message || 'Something went wrong',
+      success: false,
+      error: err,
+    });
+  }
+};
+
+export const BookControllers = {
+  AddBook,
+  GetAllOrCategoryBooks,
+  GetSingleBook,
+  DeleteBook,
+  UpdateBook,
+};
