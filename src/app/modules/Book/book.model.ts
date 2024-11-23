@@ -1,8 +1,8 @@
 import { model, Schema } from 'mongoose';
-import { TBook } from './book.inertface';
+import { iBook} from './book.inertface';
 
 // Define the schema
-const BookSchema = new Schema<TBook>(
+const BookSchema = new Schema<iBook>(
   {
     title: {
       type: String,
@@ -53,5 +53,5 @@ BookSchema.set('toJSON', {
   },
 });
 
-const Book = model<TBook>('Book', BookSchema);
+const Book = model<iBook>('Book', BookSchema);
 export default Book;

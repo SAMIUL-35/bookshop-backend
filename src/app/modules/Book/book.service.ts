@@ -1,7 +1,7 @@
-import { TBook } from './book.inertface';
+import { iBook } from './book.inertface';
 import Book from './book.model';
 
-const AddBookIntoDB = async (bookData: TBook) => {
+const AddBookIntoDB = async (bookData: iBook) => {
   const result = await Book.create(bookData);
   return result;
 };
@@ -17,7 +17,7 @@ const getSingleBookFromDB = async (bookId: string) => {
   return result;
 };
 
-const updateBookInDB = async (bookId: string, updates: Partial<TBook>) => {
+const updateBookInDB = async (bookId: string, updates: Partial<iBook>) => {
   const result = await Book.findByIdAndUpdate(bookId, updates, {
     new: true,
   });

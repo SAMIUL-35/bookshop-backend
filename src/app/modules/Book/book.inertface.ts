@@ -1,4 +1,4 @@
-export type TBook = {
+export type iBook = {
   title: string;
   author: string;
   price: number;
