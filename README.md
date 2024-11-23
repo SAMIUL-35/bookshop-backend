@@ -64,4 +64,8 @@ The following table outlines all available API endpoints:
 | `POST` | `/api/orders` | Create a new order | `{ "email": "customer@example.com", "product": "bookId", "quantity": 2, "totalPrice": 41.98 }` | `{ "_id": "orderId", "email": "customer@example.com", "product": "bookId", "quantity": 2, "totalPrice": 41.98 }` |
 | `GET` | `/api/orders` | Get all orders | None | `[ { "_id": "orderId", "email": "customer@example.com", "product": "bookId", "quantity": 2, "totalPrice": 41.98 }, ... ]` |
 | `GET` | `/api/orders/revenue` | Get the total revenue from orders | None | `{ "totalRevenue": 500.00 }` |
-vercel link:`bookshop-backend-psi.vercel.app`
+
+
+
+##vercel link
+vercel live link:`bookshop-backend-psi.vercel.app`
