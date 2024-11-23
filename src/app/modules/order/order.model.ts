@@ -1,22 +1,26 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, {  Schema } from 'mongoose';
+import { IOrder } from './order.interface';
 
-const orderSchema: Schema = new Schema(
+const orderSchema: Schema = new Schema<IOrder>(
   {
-    email: { type: String, required: true, match: /.+\@.+\..+/ }, 
-    product: { type: String, ref: 'Book', required: true }, 
-    quantity: { type: Number, required: true, min: 1 }, 
-    totalPrice: { type: Number, required: true, min: 0 }, 
+    email: { type: String, required: true },
+    product: { type:String, ref: 'Book', required: true }, // Ensure product is an ObjectId
+    quantity: { type: Number, required: true, min: 1 },
+    totalPrice: { type: Number, required: true, min: 0 },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
+
+
+
 orderSchema.set('toJSON', {
   transform: (doc, ret) => {
     delete ret.__v;
     return ret;
   },
 });
-const Order = mongoose.model<IOrder & Document>('Order', orderSchema);
+const Order = mongoose.model<IOrder >('Order', orderSchema);
 
 export default Order;

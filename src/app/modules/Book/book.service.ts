@@ -1,4 +1,3 @@
-
 import { TBook } from './book.inertface';
 import Book from './book.model';
 
@@ -7,7 +6,7 @@ const AddBookIntoDB = async (bookData: TBook) => {
   return result;
 };
 
-const getAllBooksFromDB = async (filter: Record<string, any>) => {
+const getAllBooksFromDB = async (filter: Record<string, unknown>) => {
   const result = await Book.find(filter);
   return result;
 };

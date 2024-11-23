@@ -1,10 +1,11 @@
-import mongoose from 'mongoose';
+
 import Book from '../Book/book.model';
 import Order from './order.model';
+import { IOrder } from './order.interface';
 
 const AddOrderIntoDB = async (orderData: IOrder) => {
-  const productId = new mongoose.Types.ObjectId(orderData.product);  
-  const orderBook = await Book.findById(productId);
+ 
+  const orderBook = await Book.findById(orderData.product);
 
   if (!orderBook) {
     throw new Error('Book not found');
@@ -30,19 +31,23 @@ const AddOrderIntoDB = async (orderData: IOrder) => {
 };
 
 const calculateTotalRevenue = async () => {
-  const result = await Order.aggregate([
-    {
-      $group: {
-        _id: null, 
-        totalRevenue: {
-          $sum: { $multiply: ['$totalPrice', '$quantity'] },
-        },
-      },
-    },
-  ]);
 
-  return result.length === 0 ? 0 : result[0].totalRevenue;
+  const result = await Order.aggregate([
+  {
+    $group: {
+      _id: null,
+      totalRevenue: { $sum: '$totalPrice' },
+    },
+  },
+]);
+
+
+  return result.length > 0 ? result[0].totalRevenue : 0;
 };
+
+
+
+
 
 const getAllOrders = async () => {
   const result = await Order.find();
